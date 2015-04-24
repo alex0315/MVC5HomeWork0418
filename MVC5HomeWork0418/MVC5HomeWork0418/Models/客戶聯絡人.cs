@@ -23,7 +23,7 @@ namespace MVC5HomeWork0418.Models
         public string 姓名 { get; set; }
         [EmailAddress]
         public string Email { get; set; }
-        [Phone]
+        [RegularExpression(@"^09\d{2}-\d{6}", ErrorMessage = "手機 必須符合09xx-xxxxxx格式( e.g. 0911-111111 )。")]
         public string 手機 { get; set; }
         [Phone]
         public string 電話 { get; set; }
