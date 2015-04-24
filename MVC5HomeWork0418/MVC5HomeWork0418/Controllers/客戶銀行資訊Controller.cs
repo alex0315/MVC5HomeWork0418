@@ -17,7 +17,7 @@ namespace MVC5HomeWork0418.Controllers
         // GET: 客戶銀行資訊
         public ActionResult Index()
         {
-            var 客戶銀行資訊 = db.客戶銀行資訊.Include(客 => 客.客戶資料);
+            var 客戶銀行資訊 = db.客戶銀行資訊.Include(客 => 客.客戶資料).Where(b => !b.客戶資料.是否已刪除 && !b.是否已刪除);
             return View(客戶銀行資訊.ToList());
         }
 
@@ -28,12 +28,12 @@ namespace MVC5HomeWork0418.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
-            if (客戶銀行資訊 == null)
+            var bank = db.客戶銀行資訊.FirstOrDefault(b => b.Id == id && !b.是否已刪除 && !b.客戶資料.是否已刪除);
+            if (bank == null)
             {
                 return HttpNotFound();
             }
-            return View(客戶銀行資訊);
+            return View(bank);
         }
 
         // GET: 客戶銀行資訊/Create
@@ -48,7 +48,7 @@ namespace MVC5HomeWork0418.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,客戶Id,銀行名稱,銀行代碼,分行代碼,帳戶名稱,帳戶號碼,是否已刪除")] 客戶銀行資訊 客戶銀行資訊)
+        public ActionResult Create([Bind(Include = "Id,客戶Id,銀行名稱,銀行代碼,分行代碼,帳戶名稱,帳戶號碼")] 客戶銀行資訊 客戶銀行資訊)
         {
             if (ModelState.IsValid)
             {
@@ -68,13 +68,13 @@ namespace MVC5HomeWork0418.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
-            if (客戶銀行資訊 == null)
+            var bank = db.客戶銀行資訊.FirstOrDefault(b => b.Id == id && !b.是否已刪除 && !b.客戶資料.是否已刪除);
+            if (bank == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
-            return View(客戶銀行資訊);
+            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", bank.客戶Id);
+            return View(bank);
         }
 
         // POST: 客戶銀行資訊/Edit/5
@@ -82,7 +82,7 @@ namespace MVC5HomeWork0418.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,客戶Id,銀行名稱,銀行代碼,分行代碼,帳戶名稱,帳戶號碼,是否已刪除")] 客戶銀行資訊 客戶銀行資訊)
+        public ActionResult Edit([Bind(Include = "Id,客戶Id,銀行名稱,銀行代碼,分行代碼,帳戶名稱,帳戶號碼")] 客戶銀行資訊 客戶銀行資訊)
         {
             if (ModelState.IsValid)
             {
@@ -101,12 +101,12 @@ namespace MVC5HomeWork0418.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
-            if (客戶銀行資訊 == null)
+            var bank = db.客戶銀行資訊.FirstOrDefault(b => b.Id == id && !b.是否已刪除 && !b.客戶資料.是否已刪除);
+            if (bank == null)
             {
                 return HttpNotFound();
             }
-            return View(客戶銀行資訊);
+            return View(bank);
         }
 
         // POST: 客戶銀行資訊/Delete/5
@@ -115,7 +115,7 @@ namespace MVC5HomeWork0418.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
-            db.客戶銀行資訊.Remove(客戶銀行資訊);
+            客戶銀行資訊.是否已刪除 = true;
             db.SaveChanges();
             return RedirectToAction("Index");
         }
