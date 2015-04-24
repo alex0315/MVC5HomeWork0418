@@ -17,7 +17,7 @@ namespace MVC5HomeWork0418.Controllers
         // GET: 客戶聯絡人
         public ActionResult Index()
         {
-            var 客戶聯絡人 = db.客戶聯絡人.Include(客 => 客.客戶資料);
+            var 客戶聯絡人 = db.客戶聯絡人.Include(客 => 客.客戶資料).Where(c => !c.客戶資料.是否已刪除 && !c.是否已刪除);
             return View(客戶聯絡人.ToList());
         }
 
@@ -28,12 +28,12 @@ namespace MVC5HomeWork0418.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
-            if (客戶聯絡人 == null)
+            var contact = db.客戶聯絡人.FirstOrDefault(c => c.Id == id && !c.是否已刪除 && !c.客戶資料.是否已刪除);
+            if (contact == null)
             {
                 return HttpNotFound();
             }
-            return View(客戶聯絡人);
+            return View(contact);
         }
 
         // GET: 客戶聯絡人/Create
@@ -48,7 +48,7 @@ namespace MVC5HomeWork0418.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,客戶Id,職稱,姓名,Email,手機,電話,是否已刪除")] 客戶聯絡人 客戶聯絡人)
+        public ActionResult Create([Bind(Include = "Id,客戶Id,職稱,姓名,Email,手機,電話")] 客戶聯絡人 客戶聯絡人)
         {
             if (ModelState.IsValid)
             {
@@ -68,13 +68,13 @@ namespace MVC5HomeWork0418.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
-            if (客戶聯絡人 == null)
+            var contact = db.客戶聯絡人.FirstOrDefault(c => c.Id == id && !c.是否已刪除 && !c.客戶資料.是否已刪除);
+            if (contact == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
-            return View(客戶聯絡人);
+            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", contact.客戶Id);
+            return View(contact);
         }
 
         // POST: 客戶聯絡人/Edit/5
@@ -82,7 +82,7 @@ namespace MVC5HomeWork0418.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,客戶Id,職稱,姓名,Email,手機,電話,是否已刪除")] 客戶聯絡人 客戶聯絡人)
+        public ActionResult Edit([Bind(Include = "Id,客戶Id,職稱,姓名,Email,手機,電話")] 客戶聯絡人 客戶聯絡人)
         {
             if (ModelState.IsValid)
             {
@@ -101,12 +101,12 @@ namespace MVC5HomeWork0418.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
-            if (客戶聯絡人 == null)
+            var contact = db.客戶聯絡人.FirstOrDefault(c => c.Id == id && !c.是否已刪除 && !c.客戶資料.是否已刪除);
+            if (contact == null)
             {
                 return HttpNotFound();
             }
-            return View(客戶聯絡人);
+            return View(contact);
         }
 
         // POST: 客戶聯絡人/Delete/5
@@ -115,7 +115,7 @@ namespace MVC5HomeWork0418.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
-            db.客戶聯絡人.Remove(客戶聯絡人);
+            客戶聯絡人.是否已刪除 = true;
             db.SaveChanges();
             return RedirectToAction("Index");
         }
