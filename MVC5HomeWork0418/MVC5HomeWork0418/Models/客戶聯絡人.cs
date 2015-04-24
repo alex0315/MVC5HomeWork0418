@@ -11,15 +11,21 @@ namespace MVC5HomeWork0418.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     
     public partial class 客戶聯絡人
     {
         public int Id { get; set; }
         public int 客戶Id { get; set; }
+        [Required]
         public string 職稱 { get; set; }
+        [Required]
         public string 姓名 { get; set; }
+        [EmailAddress]
         public string Email { get; set; }
+        [Phone]
         public string 手機 { get; set; }
+        [Phone]
         public string 電話 { get; set; }
         public bool 是否已刪除 { get; set; }
     

@@ -11,11 +11,13 @@ namespace MVC5HomeWork0418.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     
     public partial class 客戶銀行資訊
     {
         public int Id { get; set; }
         public int 客戶Id { get; set; }
+        [Required]
         public string 銀行名稱 { get; set; }
         public int 銀行代碼 { get; set; }
         public Nullable<int> 分行代碼 { get; set; }
