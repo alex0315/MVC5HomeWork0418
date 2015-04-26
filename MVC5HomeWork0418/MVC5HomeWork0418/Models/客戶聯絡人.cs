@@ -12,8 +12,10 @@ namespace MVC5HomeWork0418.Models
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Data.Entity;
     
-    public partial class 客戶聯絡人
+    public partial class 客戶聯絡人 : IValidatableObject
     {
         public int Id { get; set; }
         public int 客戶Id { get; set; }
@@ -30,5 +32,21 @@ namespace MVC5HomeWork0418.Models
         public bool 是否已刪除 { get; set; }
     
         public virtual 客戶資料 客戶資料 { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            客戶資料Entities db = new 客戶資料Entities();
+            var contact = db.客戶聯絡人.Include(客 => 客.客戶資料)
+                .Where(c => !c.客戶資料.是否已刪除 
+                    && !c.是否已刪除 
+                    && c.Email == Email 
+                    && c.客戶Id == 客戶Id
+                    && c.Id != Id).FirstOrDefault();
+            if (contact != null)
+            {
+                yield return new ValidationResult("同客戶的客戶聯絡人Email不能重複", new string[] { "Email" });
+            }
+
+        }
     }
 }
